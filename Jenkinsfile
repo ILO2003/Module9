@@ -12,7 +12,7 @@ pipeline {
         maven 'maven-3.9'
     }
     environment {
-        IMAGE_NAME = 'ilo2003/demo-app:java-maven-1.0'
+        IMAGE_NAME = 'ilo2003/demo-app:java-maven-2.0'
     }
         stages {
             stage('build app') {
