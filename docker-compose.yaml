@@ -3,7 +3,7 @@ services:
       java-maven-app:
         image: ilo2003/demo-app:java-maven-1.0
         ports:
-          -8080:8080
+          - 8080:8080
       postgres:
         image: postgres:15
         ports:
