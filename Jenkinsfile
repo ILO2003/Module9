@@ -11,10 +11,21 @@ pipeline {
     tools{
         maven 'maven-3.9'
     }
-    environment {
-        IMAGE_NAME = 'ilo2003/demo-app:java-maven-2.0'
-    }
         stages {
+            stage('increment version'){
+            steps{
+                script {
+                echo 'incrementing app version ...'
+                sh 'mvn build-helper:parse-version versions:set \
+                    -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion} \
+                    versions:commit '
+                def matcher = readFile('pom.xml')  =~ '<version>(.+)</version>'
+                def version = matcher[0][1]
+                env.IMAGE_NAME = "$version-$BUILD_NUMBER"
+
+                }
+            }
+        }
             stage('build app') {
             steps {
                 echo 'building application jar...'
@@ -45,6 +56,24 @@ pipeline {
                     }
                 }
             }
-        }               
+        }  
+        stage("commit version update") {
+                    steps {
+                        script {
+                            withCredentials([string(credentialsId: 'github-token', variable: 'TOKEN')]){
+                                sh 'git config --global user.email "jenkins@example.com"'
+                                sh 'git config --global user.name "jenkins"'
+
+                                sh 'git status'
+                                sh 'git branch'
+                                sh 'git config --list'
+                                sh "git remote set-url origin https://${TOKEN}@github.com/ILO2003/Module9.git"
+                                sh 'git add .'
+                                sh 'git commit -m "CI: version bump"'
+                                sh 'git push -f origin HEAD:master'
+                            }
+                        }
+                    }
+                }             
     }
 } 
