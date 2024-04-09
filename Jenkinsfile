@@ -13,6 +13,11 @@ pipeline {
     }
         stages {
             stage('increment version'){
+              when {
+                expression {
+                  return env.GIT_BRANCH == "master"
+                }
+            }
             steps{
                 script {
                 echo 'incrementing app version ...'
@@ -43,6 +48,11 @@ pipeline {
             }
         } 
              stage("deploy") {
+                 when {
+                expression {
+                  return env.GIT_BRANCH == "master"
+                }
+            }
             steps {
                 script {
                     echo "Deploying the application..."
@@ -59,6 +69,11 @@ pipeline {
             }
         }  
         stage("commit version update") {
+            when {
+                expression {
+                  return env.GIT_BRANCH == "master"
+                }
+            }
                     steps {
                         script {
                             withCredentials([string(credentialsId: 'github-token', variable: 'TOKEN')]){
