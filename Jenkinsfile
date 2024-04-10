@@ -34,6 +34,7 @@ pipeline {
             stage('build app') {
             steps {
                 echo 'building application jar...'
+                echo "testing Ci/cd"
                 buildJar()
             }
         }
